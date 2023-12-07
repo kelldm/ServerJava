@@ -72,5 +72,17 @@ public class Main {
                 return "{\"ack\":\"0\"}";
 
         }));
+
+        post("/imc", ((request, response) -> {
+            String imc = request.body();
+            JsonElement jsonElement = JsonParser.parseString(imc);
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            Double massa = jsonObject.get("massa").getAsDouble();
+            Double altura = jsonObject.get("altura").getAsDouble();
+            System.out.println("Corpo JSON: " + imc );
+            Double IMC = massa / Math.pow(altura, 2);
+                return String.valueOf(IMC);
+
+        }));
     }
 }
