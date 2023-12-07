@@ -1,6 +1,10 @@
 package org.example;
 
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -44,16 +48,29 @@ public class Main {
 
         frame.add(panel);
         frame.setVisible(true);
+        port(8080);
+        get("/api/:nome", (req, res)->{
+            String nome = req.params(":nome");
+            nomeRequis = nome;
+            totalRequis++;
+            inputField1.setText(nomeRequis);
+            inputField2.setText(Integer.toString(totalRequis));
+            return String.valueOf(totalRequis);
+        });
+        post("/api", ((request, response) -> {
+            String nomeEmail = request.body();
+            System.out.println("Corpo JSON: " + nomeEmail);
 
-            port(8080);
-            get("/api/:nome", (req, res)->{
-                String nome = req.params(":nome");
-                nomeRequis = nome;
-           totalRequis++;
-           inputField1.setText(nomeRequis);
-           inputField2.setText(Integer.toString(totalRequis));
-           return String.valueOf(totalRequis);
-            });
+            JsonElement jsonElement = JsonParser.parseString(nomeEmail);
+            JsonObject jsonObject =jsonElement.getAsJsonObject();
+            inputField1.setText(jsonObject.get("nome").getAsString());
+            inputField2.setText(jsonObject.get("email").getAsString());
+
+            if (inputField1.getText()==inputField2.getText())
+                return "{\"ack\":\"1\"}";
+            else
+                return "{\"ack\":\"0\"}";
+
+        }));
     }
 }
-
